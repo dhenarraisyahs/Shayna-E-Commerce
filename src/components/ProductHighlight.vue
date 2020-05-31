@@ -17,8 +17,11 @@
                 <div class="pi-pic">
                   <img :src="product.galleries[0].photo" alt />
                   <ul>
-                    <li class="w-icon active">
-                      <router-link to="/product">
+                    <li
+                      class="w-icon active"
+                      @click="addToCart(product.id, product.name, product.price, product.galleries[0].photo )"
+                    >
+                      <router-link to="/" class="primary-btn pd-cart">
                         <i class="icon_bag_alt"></i>
                       </router-link>
                     </li>
@@ -64,7 +67,21 @@ export default {
   },
   data() {
     return {
-      products: []
+      products: [],
+      productCart: [],
+      addToCart(productId, productName, productPrice, productPhoto) {
+        var productAdded = {
+          id: productId,
+          name: productName,
+          photo: productPhoto,
+          price: productPrice
+        };
+        this.productCart.push(productAdded);
+
+        // save shange of product to local storage
+        const parsed = JSON.stringify(this.productCart);
+        localStorage.setItem("productCart", parsed);
+      }
     };
   },
   mounted() {

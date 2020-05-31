@@ -25,61 +25,59 @@
               </div>
             </div>
             <div class="col-lg-7 col-md-7"></div>
+
+            <!-- Shopping Cart -->
             <div class="col-lg-3 text-right col-md-3">
               <ul class="nav-right">
                 <li class="cart-icon">
                   Keranjang Belanja &nbsp;
                   <a href="#">
                     <i class="icon_bag_alt"></i>
-                    <span>3</span>
+                    <span>{{productCart.length}}</span>
                   </a>
                   <div class="cart-hover">
                     <div class="select-items">
-                      <table>
-                        <tbody>
-                          <tr>
+                      <table v-if="productCart.length > 0">
+                        <tbody >
+                          <tr v-for="thumbCart in productCart" :key="thumbCart.id">
                             <td class="si-pic">
-                              <img src="img/select-product-1.jpg" alt />
+                              <img :src="thumbCart.photo" alt />
                             </td>
                             <td class="si-text">
                               <div class="product-selected">
-                                <p>$60.00 x 1</p>
-                                <h6>Kabino Bedside Table</h6>
+                                <p>${{thumbCart.price}} x 1</p>
+                                <h6>{{thumbCart.name}}</h6>
                               </div>
                             </td>
                             <td class="si-close">
-                              <i class="ti-close"></i>
-                            </td>
-                          </tr>
-                          <tr>
-                            <td class="si-pic">
-                              <img src="img/select-product-2.jpg" alt />
-                            </td>
-                            <td class="si-text">
-                              <div class="product-selected">
-                                <p>$60.00 x 1</p>
-                                <h6>Kabino Bedside Table</h6>
-                              </div>
-                            </td>
-                            <td class="si-close">
-                              <i class="ti-close"></i>
+                              <i class="ti-close" @click="removeProduct(productCart.index)"></i>
                             </td>
                           </tr>
                         </tbody>
                       </table>
+                      <div v-else>
+                        <div class="alert alert-light" role="alert">
+                          You didn't choose any products yet!
+                          Click
+                          <div href="#" class="alert-link">
+                            <router-link to="/">Products Highlight,</router-link>
+                          </div>to choose your favorite ones!
+                        </div>
+                      </div>
                     </div>
                     <div class="select-total">
                       <span>total:</span>
                       <h5>$120.00</h5>
                     </div>
                     <div class="select-button">
-                      <a href="#" class="primary-btn view-card">VIEW CARD</a>
+                      <router-link to="/cartDetail" class="primary-btn view-card">VIEW CARD</router-link>
                       <a href="#" class="primary-btn checkout-btn">CHECK OUT</a>
                     </div>
                   </div>
                 </li>
               </ul>
             </div>
+            <!-- Shopping Cart End -->
           </div>
         </div>
       </div>
@@ -90,9 +88,37 @@
 
 <script>
 export default {
-    name : "HeaderHome"
+  name: "HeaderHome",
+  data() {
+    return {
+      productCart: []
+
+      // check product id
+      // productId: this.$route.params.id
+    };
+  },
+  methods: {
+    removeProduct(index) {
+      this.productCart.splice(index,1);
+      // save shange of product to local storage
+      const parsed = JSON.stringify(this.productCart);
+      localStorage.setItem("productCart", parsed);
+    }
+  },
+  mounted() {
+    if (localStorage.getItem("productCart")) {
+      try {
+        this.productCart = JSON.parse(localStorage.getItem("productCart"));
+      } catch (e) {
+        localStorage.removeItem("productCart");
+      }
+    }
+  }
 };
 </script>
 
 <style>
+.si-pic {
+  width: 75px;
+}
 </style>

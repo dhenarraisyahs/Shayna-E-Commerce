@@ -10,7 +10,7 @@
         <div class="row">
           <div class="col-lg-12 text-left">
             <div class="row">
-              <div class="col-lg-6" >
+              <div class="col-lg-6">
                 <div class="product-pic-zoom">
                   <img class="product-big-img" :src="defaultImg" alt />
                 </div>
@@ -22,7 +22,8 @@
                     :dots="false"
                   >
                     <div
-                    v-for="thumb in productDetails.galleries" :key="thumb.id"
+                      v-for="thumb in productDetails.galleries"
+                      :key="thumb.id"
                       class="pt"
                       @click="changeImage(thumb.photo)"
                       :class="thumb.photo == defaultImg ? 'active' :''"
@@ -39,18 +40,16 @@
                     <h3>{{ productDetails.name }}</h3>
                   </div>
                   <div class="pd-desc">
-                    <p>{{ productDetails.description }}</p>
-                    <p>
-                      Lorem ipsum dolor sit, amet consectetur adipisicing elit. Quam possimus quisquam animi, commodi, nihil voluptate nostrum neque architecto illo officiis doloremque et corrupti cupiditate voluptatibus error illum. Commodi expedita animi nulla aspernatur.
-                      Id asperiores blanditiis, omnis repudiandae iste inventore cum, quam sint molestiae accusamus voluptates ex tempora illum sit perspiciatis. Nostrum dolor tenetur amet, illo natus magni veniam quia sit nihil dolores.
-                      Commodi ratione distinctio harum voluptatum velit facilis voluptas animi non laudantium, id dolorem atque perferendis enim ducimus? A exercitationem recusandae aliquam quod. Itaque inventore obcaecati, unde quam
-                      impedit praesentium veritatis quis beatae ea atque perferendis voluptates velit architecto?
-                    </p>
+                    <p v-html="productDetails.description"></p>
                     <h4>${{ productDetails.price }}</h4>
                   </div>
                   <div class="quantity">
                     <router-link to="/cart">
-                      <div class="primary-btn pd-cart">Add To Cart</div>
+                    <a
+                      href="#"
+                      class="primary-btn pd-cart"
+                      @click="addToCart(productDetails.id, productDetails.name, productDetails.price, productDetails.galleries[0].photo )"
+                    >Add To Cart</a>
                     </router-link>
                   </div>
                 </div>
@@ -91,17 +90,25 @@ export default {
   data() {
     return {
       defaultImg: "",
-      dataThumb: [
-        "img/good-4.png",
-        "img/good-5.png",
-        "img/good-6.png",
-        "img/good-7.png"
-      ],
-      productDetails: []
+      productDetails: [],
+      productCart: [],
+      addToCart(productId, productName, productPrice, productPhoto) {
+        var productAdded = {
+          id: productId,
+          name: productName,
+          photo: productPhoto,
+          price: productPrice
+        };
+        this.productCart.push(productAdded);
+
+        // save shange of product to local storage
+        const parsed = JSON.stringify(this.productCart);
+        localStorage.setItem("productCart", parsed);
+      }
 
       // check product id
       // productId: this.$route.params.id
-    }
+    };
   },
   methods: {
     changeImage(urlImage) {
@@ -109,19 +116,26 @@ export default {
       // check product id
       // console.log(this.productDetails);
     },
-    getProductDataAndPicture(data){
+    getProductDataAndPicture(data) {
       this.productDetails = data;
       this.defaultImg = data.galleries[0].photo;
     }
   },
   mounted() {
+    if (localStorage.getItem("productCart")) {
+      try {
+        this.productCart = JSON.parse(localStorage.getItem("productCart"));
+      } catch (e) {
+        localStorage.removeItem("productCart");
+      }
+    }
     axios
       .get("http://shayna-backend.belajarkoding.com/api/products/", {
         params: {
           id: this.$route.params.id
         }
       })
-      .then(res => (this.getProductDataAndPicture(res.data.data)))
+      .then(res => this.getProductDataAndPicture(res.data.data))
       .catch(err => console.log(err));
   }
 };

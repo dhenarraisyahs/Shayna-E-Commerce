@@ -30,9 +30,12 @@
                           <h5>{{productCarts.name}}</h5>
                         </td>
                         <td class="p-price first-row">${{productCarts.price}}</td>
-                        <td class="delete-item" >
-                          <a href="#" >
-                            <i class="material-icons" @click="removeProduct(productCart.index)">close</i>
+                        <td class="delete-item">
+                          <a href="#">
+                            <i
+                              class="material-icons"
+                              @click="removeProduct(productCart.index)"
+                            >close</i>
                           </a>
                         </td>
                       </tr>
@@ -94,15 +97,15 @@
                     </li>
                     <li class="subtotal mt-3">
                       Subtotal
-                      <span>$240.00</span>
+                      <span>${{$b = totalPrice}}.00</span>
                     </li>
                     <li class="subtotal mt-3">
                       Pajak
-                      <span>10%</span>
+                      <span>${{$a = totalPrice * 10 / 100}}.00</span>
                     </li>
                     <li class="subtotal mt-3">
                       Total Biaya
-                      <span>$440.00</span>
+                      <span>${{$b+$a}}.00</span>
                     </li>
                     <li class="subtotal mt-3">
                       Bank Transfer
@@ -164,6 +167,13 @@ export default {
       } catch (e) {
         localStorage.removeItem("productCart");
       }
+    }
+  },
+  computed: {
+    totalPrice() {
+      return this.productCart.reduce(function(items, data) {
+        return items + data.price;
+      }, 0);
     }
   }
 };

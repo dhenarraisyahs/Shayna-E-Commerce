@@ -67,7 +67,7 @@
                     </div>
                     <div class="select-total">
                       <span>total:</span>
-                      <h5>$120.00</h5>
+                      <h5>${{totalPrice}}.00</h5>
                     </div>
                     <div class="select-button">
                       <router-link to="/cartDetail" class="primary-btn view-card">VIEW CARD</router-link>
@@ -112,6 +112,13 @@ export default {
       } catch (e) {
         localStorage.removeItem("productCart");
       }
+    }
+  },
+  computed :{
+    totalPrice(){
+      return this.productCart.reduce(function(items, data){
+        return items + data.price;
+      },0);
     }
   }
 };

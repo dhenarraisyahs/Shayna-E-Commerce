@@ -55,6 +55,7 @@
                         id="namaLengkap"
                         aria-describedby="namaHelp"
                         placeholder="Masukan Nama"
+                        v-model="customerInfo.name"
                       />
                     </div>
                     <div class="form-group">
@@ -65,6 +66,7 @@
                         id="emailAddress"
                         aria-describedby="emailHelp"
                         placeholder="Masukan Email"
+                        v-model="customerInfo.email"
                       />
                     </div>
                     <div class="form-group">
@@ -75,11 +77,17 @@
                         id="noHP"
                         aria-describedby="noHPHelp"
                         placeholder="Masukan No. HP"
+                        v-model="customerInfo.phone"
                       />
                     </div>
                     <div class="form-group">
                       <label for="alamatLengkap">Alamat Lengkap</label>
-                      <textarea class="form-control" id="alamatLengkap" rows="3"></textarea>
+                      <textarea
+                        class="form-control"
+                        id="alamatLengkap"
+                        rows="3"
+                        v-model="customerInfo.address"
+                      ></textarea>
                     </div>
                   </form>
                 </div>
@@ -120,7 +128,7 @@
                       <span>Shayna</span>
                     </li>
                   </ul>
-                  <a href="success.html" class="proceed-btn">I ALREADY PAID</a>
+                  <a @click="checkout()" href="#" class="proceed-btn">I ALREADY PAID</a>
                 </div>
               </div>
             </div>
@@ -137,6 +145,8 @@
 import HeaderHome from "../components/HeaderHome";
 import BreadCrumb from "../components/BreadCrumb";
 import Footer from "../components/Footer";
+import axios from "axios";
+
 export default {
   name: "CartDetail",
   components: {
@@ -146,7 +156,13 @@ export default {
   },
   data() {
     return {
-      productCart: []
+      productCart: [],
+      customerInfo: {
+        name: "",
+        email: "",
+        phone: "",
+        address: ""
+      }
 
       // check product id
       // productId: this.$route.params.id
@@ -158,6 +174,28 @@ export default {
       // save shange of product to local storage
       const parsed = JSON.stringify(this.productCart);
       localStorage.setItem("productCart", parsed);
+    },
+    checkout() {
+      // convert all checkout products to be array for trasaction details
+      let productIds = this.productCart.map(function(product) {
+        return product.id;
+      });
+
+      // convert all checkout datas to be object
+      let checkoutData = {
+        'name': this.customerInfo.name,
+        'email': this.customerInfo.email,
+        'phone': this.customerInfo.phone,
+        'address': this.customerInfo.address,
+        "transaction_price": this.totalPrice + (this.totalPrice * 10) / 100,
+        "transaction_status": "PENDING",
+        "transaction_datils": productIds
+      };
+
+      axios
+        .post("https://shayna-backend.belajarkoding.com/api/checkout", checkoutData)
+        .then(() => this.$router.push('success'))
+        .catch(err =>console.log(err));
     }
   },
   mounted() {

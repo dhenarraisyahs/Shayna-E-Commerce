@@ -2,8 +2,6 @@
   <div class="CartDetail">
     <HeaderHome />
 
-    <BreadCrumb />
-
     <!-- Shopping Cart Section Begin -->
     <section class="shopping-cart spad">
       <div class="container">
@@ -143,7 +141,6 @@
 
 <script>
 import HeaderHome from "../components/HeaderHome";
-import BreadCrumb from "../components/BreadCrumb";
 import Footer from "../components/Footer";
 import axios from "axios";
 
@@ -151,17 +148,16 @@ export default {
   name: "CartDetail",
   components: {
     HeaderHome,
-    BreadCrumb,
     Footer
   },
   data() {
     return {
       productCart: [],
       customerInfo: {
-        name: "",
-        email: "",
-        phone: "",
-        address: ""
+        name: '',
+        email: '',
+        phone:'',
+        address: ''
       }
 
       // check product id
@@ -185,16 +181,16 @@ export default {
       let checkoutData = {
         'name': this.customerInfo.name,
         'email': this.customerInfo.email,
-        'phone': this.customerInfo.phone,
+        'number': this.customerInfo.phone,
         'address': this.customerInfo.address,
-        "transaction_price": this.totalPrice + (this.totalPrice * 10) / 100,
+        "transaction_total": this.totalPrice,
         "transaction_status": "PENDING",
-        "transaction_datils": productIds
+        "transaction_details": productIds
       };
 
       axios
-        .post("https://shayna-backend.belajarkoding.com/api/checkout", checkoutData)
-        .then(() => this.$router.push('success'))
+        .post("http://shayna-backend.belajarkoding.com/api/checkout", checkoutData)
+        .then(() => this.$router.push("success"))
         .catch(err =>console.log(err));
     }
   },

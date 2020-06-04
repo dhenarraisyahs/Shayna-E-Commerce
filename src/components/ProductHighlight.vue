@@ -89,6 +89,7 @@ export default {
       .get("http://shayna-backend.belajarkoding.com/api/products")
       .then(res => (this.products = res.data.data.data))
       .catch(err => console.log(err));
+      // .catch(console.log('ga bisa'));
   }
 };
 </script>

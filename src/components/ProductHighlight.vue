@@ -65,6 +65,20 @@ export default {
   components: {
     carousel
   },
+  mounted() {
+    axios
+      .get("http://shayna-backend.belajarkoding.com/api/products")
+      .then(res => (this.products = res.data.data.data))
+      .catch(err => console.log(err));
+      // .catch(console.log('ga bisa'));
+    if(localStorage.getItem("productCart")){
+      try {
+        this.productCart = JSON.parse(localStorage.getItem("productCart"));
+      } catch(e) {
+        localStorage.removeItem("productCart");
+      }
+    }
+  },
   data() {
     return {
       products: [],
@@ -81,15 +95,10 @@ export default {
         // save shange of product to local storage
         const parsed = JSON.stringify(this.productCart);
         localStorage.setItem("productCart", parsed);
+
+        window.location.reload();
       }
     };
-  },
-  mounted() {
-    axios
-      .get("http://shayna-backend.belajarkoding.com/api/products")
-      .then(res => (this.products = res.data.data.data))
-      .catch(err => console.log(err));
-      // .catch(console.log('ga bisa'));
   }
 };
 </script>

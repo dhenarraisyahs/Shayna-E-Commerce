@@ -50,7 +50,7 @@
                               </div>
                             </td>
                             <td class="si-close">
-                              <i class="ti-close" @click="removeProduct(productCart.index)"></i>
+                              <i class="ti-close" @click="removeProduct(thumbCart.id)"></i>
                             </td>
                           </tr>
                         </tbody>
@@ -98,11 +98,17 @@ export default {
     };
   },
   methods: {
-    removeProduct(index) {
-      this.productCart.splice(index,1);
-      // save shange of product to local storage
+    removeProduct(idx) {
+      //get id for deleted item
+      let productCartStorage = JSON.parse(localStorage.getItem("productCart"));
+      let itemCartStorage = productCartStorage.map(itemCartStorage => itemCartStorage.id);
+      // match id from deleted item and id from storage
+      let index = itemCartStorage.findIndex(id => id == idx);
+      this.productCart.splice(index, 1);
+      //update on localstorage
       const parsed = JSON.stringify(this.productCart);
       localStorage.setItem("productCart", parsed);
+      window.location.reload();
     }
   },
   mounted() {
